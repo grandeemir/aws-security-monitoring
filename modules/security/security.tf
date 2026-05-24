@@ -61,7 +61,6 @@ resource "aws_cloudwatch_event_connection" "datadog" {
   }
 }
 
-#
 resource "aws_cloudwatch_event_api_destination" "datadog_logs" {
   name                             = "datadog-logs-destination"
   description                      = "Send logs directly to Datadog Intake HTTP API"
@@ -106,6 +105,28 @@ resource "aws_cloudwatch_event_target" "datadog" {
 }
 EOF
   }
+}
+
+# Security Hub bulgularını yakalayan EventBridge Kuralı
+resource "aws_cloudwatch_event_rule" "security_hub_to_eventbridge" {
+  name        = var.securityhub_to_eventbridge_name
+  description = "Security Hub CIS findings to EventBridge for Datadog forwarding"
+
+  event_pattern = jsonencode({
+    "source": [
+      "aws.securityhub"
+    ],
+    "detail-type": [
+      "Security Hub Findings - Imported"
+    ]
+  })
+}
+
+# Bu kuralı mevcut Datadog iletim mekanizmana (Lambda veya API Destination) hedef olarak bağlıyorsun
+resource "aws_cloudwatch_event_target" "security_hub_datadog_target" {
+  rule      = aws_cloudwatch_event_rule.security_hub_to_eventbridge.name
+  target_id = "SendSecurityHubToDatadog"
+  arn       = var.datadog_forwarder_arn # Mevcut Datadog hedefin neyse onun ARN'ı
 }
 
 # IAM ROLE & POLICY: 

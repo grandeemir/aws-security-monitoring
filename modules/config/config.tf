@@ -66,6 +66,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "config_logs" {
   rule {
     id     = "ExpireOldVersions"
     status = "Enabled"
+    expiration {
+      days = 90
+    }
   }
 }
 

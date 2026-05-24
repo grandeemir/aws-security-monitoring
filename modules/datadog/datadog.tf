@@ -1,3 +1,6 @@
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
 # Datadog'un bu rolü üstlenebilmesi (AssumeRole) için güven ilişkisi (Trust Policy)
 data "aws_iam_policy_document" "datadog_aws_trust_policy" {
   statement {
@@ -15,8 +18,6 @@ data "aws_iam_policy_document" "datadog_aws_trust_policy" {
     }
   }
 }
-
-data "aws_region" "current" {}
 
 # IAM Rolünün oluşturulması
 resource "aws_iam_role" "datadog_aws_integration" {
@@ -60,8 +61,6 @@ resource "aws_iam_role_policy_attachment" "datadog_aws_attach" {
   policy_arn = aws_iam_policy.datadog_aws_core_policy.arn
 }
 
-# Kullanıcı Account ID'sini dinamik almak için (Eğer dosyanın üstünde yoksa ekle)
-data "aws_caller_identity" "current" {}
 
 # ==========================================
 # DATADOG AWS INTEGRATION AUTOMATION

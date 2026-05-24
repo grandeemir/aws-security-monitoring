@@ -13,3 +13,11 @@ variable "endpoint" {
 variable "datadog_api_key" {
   type    = string
 }
+
+variable "securityhub_to_eventbridge_name" {
+  type    = string
+}
+
+variable "datadog_forwarder_arn" {
+  type    = string
+}
